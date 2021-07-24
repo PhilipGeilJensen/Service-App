@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:repair_service_ui/pages/request_service_flow.dart';
 import 'package:repair_service_ui/utils/constants.dart';
+import 'package:repair_service_ui/utils/helper.dart';
+import 'package:repair_service_ui/widgets/home_page_two.dart';
 import 'package:repair_service_ui/widgets/page_indicator.dart';
 
 class HomePageOne extends StatefulWidget {
@@ -64,9 +67,6 @@ class _HomePageOneState extends State<HomePageOne> {
 
   @override
   Widget build(BuildContext context) {
-    IconData test = options[0][0]["icon"];
-    print(test.codePoint);
-    print(test.fontFamily);
     Size size = MediaQuery.of(context).size;
     double heightFromWhiteBg =
         size.height - 200.0 - Scaffold.of(context).appBarMaxHeight;
@@ -145,7 +145,7 @@ class _HomePageOneState extends State<HomePageOne> {
                   3,
                   (index) => Expanded(
                     child: Container(
-                      margin: EdgeInsets.only(bottom: index == 3 ? 0 : 10.0),
+                      margin: EdgeInsets.only(bottom: index == 2 ? 0 : 10.0),
                       child: Row(
                         children: [
                           serviceCard(options[index][0], active, setActiveFunc,
@@ -176,7 +176,8 @@ Widget serviceCard(Map item, String active, Function setActive, nextPage) {
       onTap: () {
         setActive(item["key"]);
         Future.delayed(Duration(milliseconds: 350), () {
-          nextPage({"device": item["name"], "problem": ""});
+          nextPage(
+              "/two", {"device": item["name"], "deviceIcon": item["icon"]});
         });
       },
       child: AnimatedContainer(

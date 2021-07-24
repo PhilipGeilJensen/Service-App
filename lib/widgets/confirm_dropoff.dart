@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:repair_service_ui/utils/constants.dart';
 import 'package:repair_service_ui/widgets/dropoff_date.dart';
 import 'package:repair_service_ui/widgets/page_indicator.dart';
+import 'package:repair_service_ui/widgets/primary_button.dart';
 import 'package:repair_service_ui/widgets/secondary_button.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -12,11 +14,16 @@ import 'package:intl/intl.dart';
 import 'input_widget.dart';
 
 class ConfirmDropoff extends StatefulWidget {
+  final Map<String, dynamic> itemData;
+  final Function nextPage;
+
+  ConfirmDropoff({this.itemData, this.nextPage});
   @override
   _ConfirmDropoffState createState() => _ConfirmDropoffState();
 }
 
 class _ConfirmDropoffState extends State<ConfirmDropoff> {
+  DateTime _selectedTime;
   int currentIndex = 0;
   List<DropoffDate> availableTimes;
   // final List<DropoffDate> options = [
@@ -38,25 +45,16 @@ class _ConfirmDropoffState extends State<ConfirmDropoff> {
   void initState() {
     // TODO: implement initState
     http
-        .get(Uri.parse('http://10.100.32.237:80/api/dropoff-times'))
+        .get(Uri.parse(
+            'https://mlcittcx45.execute-api.eu-central-1.amazonaws.com/bookings'))
         .then((value) {
+      print(value);
       List<DropoffDate> _availableTimes = [];
       for (var item in json.decode(value.body)) {
-        List<Widget> _widgets = [];
+        List<String> _widgets = [];
         if (item["times"] != null) {
           for (var i in item["times"]) {
-            _widgets.add(
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Container(
-                  child: SecondaryButton(
-                    text: DateFormat("HH:mm")
-                        .format(DateTime.parse(i["time"]).toLocal())
-                        .toString(),
-                  ),
-                ),
-              ),
-            );
+            _widgets.add(i["time"]);
           }
         }
         _availableTimes.add(DropoffDate(
@@ -92,7 +90,7 @@ class _ConfirmDropoffState extends State<ConfirmDropoff> {
             height: 20.0,
           ),
           PageIndicator(
-            activePage: 5,
+            activePage: 6,
             darkMode: false,
           ),
           SizedBox(
@@ -156,13 +154,67 @@ class _ConfirmDropoffState extends State<ConfirmDropoff> {
                   crossAxisCount: 3,
                   crossAxisSpacing: 30,
                   childAspectRatio: 1.5,
-                  children: availableTimes[currentIndex]
-                      .options
-                      .map((e) => e)
-                      .toList(),
+                  // children: availableTimes[currentIndex].options.map((e) {
+                  //   return Padding(
+                  //     padding: EdgeInsets.symmetric(vertical: 10),
+                  //     child: Container(
+                  //       child: SecondaryButton(
+                  //         text: e
+                  //       ),
+                  //     ),
+                  //   );
+                  // }).toList(),
+                  children: List.generate(
+                      availableTimes[currentIndex].options.length, (index) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Container(
+                        child: SecondaryButton(
+                          text: Text(
+                            DateFormat("HH:mm")
+                                .format(DateTime.parse(
+                                    availableTimes[currentIndex]
+                                        .options[index]))
+                                .toString(),
+                            style: GoogleFonts.roboto(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          onPressed: () {
+                            DateTime date = DateTime.parse(
+                                availableTimes[currentIndex].options[index]);
+                            print(date);
+                            setState(() {
+                              _selectedTime = date;
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  }),
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                 ),
+          _selectedTime != null
+              ? SizedBox(
+                  height: 20,
+                )
+              : Container(),
+          _selectedTime != null
+              ? PrimaryButton(
+                  text: "Vælg tid " +
+                      DateFormat("HH:mm").format(
+                        DateTime.parse(_selectedTime.toString()),
+                      ),
+                  onPressed: () {
+                    this.widget.itemData["drop_off_date"] = _selectedTime;
+                    Future.delayed(Duration(milliseconds: 350), () {
+                      this.widget.nextPage("/confirm", this.widget.itemData);
+                    });
+                  },
+                )
+              : Container(),
         ],
       ),
     );

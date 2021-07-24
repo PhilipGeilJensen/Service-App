@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:repair_service_ui/utils/constants.dart';
@@ -16,8 +18,24 @@ class RequestServiceFlow extends StatefulWidget {
 
 class _RequestServiceFlowState extends State<RequestServiceFlow> {
   int current = 0;
-  Map<String, dynamic> itemData = {"device": "Initial", "problem": "Initial"};
+  Map<String, dynamic> itemData;
+  Map<String, Widget> _widgets = {};
   int confirmWidget;
+  Queue<String> _widget = Queue();
+
+  void pushPage(String page, Map<String, dynamic> item) {
+    print(item);
+    setState(() {
+      itemData = item;
+      _widget.add(page);
+    });
+  }
+
+  void popPage() {
+    setState(() {
+      _widget.removeLast();
+    });
+  }
 
   void nextPage(Map<String, dynamic> item) {
     print(item);
@@ -44,45 +62,65 @@ class _RequestServiceFlowState extends State<RequestServiceFlow> {
 
   void reset() {
     setState(() {
-      current = 0;
+      _widget.clear();
+    });
+  }
+
+  void goToPage(int index) {
+    setState(() {
+      current = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> pages = [
-      HomePageOne(nextPage: nextPage, prevPage: prevPage),
-      HomePageTwo(nextPage: nextPage, prevPage: prevPage, itemData: itemData),
-      HomePageInformation(
-          nextPage: nextPage, prevPage: prevPage, itemData: itemData),
-      HomePageContact(
-          nextPage: nextPage, prevPage: prevPage, itemData: itemData),
-      HomePageThree(
-        nextPage: confirmPage,
-        prevPage: prevPage,
+    _widgets = {
+      "/one": HomePageOne(nextPage: pushPage, prevPage: popPage),
+      "/two": HomePageTwo(
+          nextPage: pushPage, prevPage: popPage, itemData: itemData),
+      "/three": HomePageThree(
+          nextPage: pushPage, prevPage: popPage, itemData: itemData),
+      "/info": HomePageInformation(
+          nextPage: pushPage, prevPage: popPage, itemData: itemData),
+      "/contact": HomePageContact(
+          nextPage: pushPage, prevPage: popPage, itemData: itemData),
+      "/booking": ConfirmDropoff(
         itemData: itemData,
+        nextPage: pushPage,
       ),
-      ConfirmDropoff()
-    ];
+      "/confirm": ConfirmPage(
+        prevPage: popPage,
+        itemData: itemData,
+        reset: reset,
+      ),
+    };
+    if (_widgets.isEmpty) {
+      return Center(
+        child: CircularProgressIndicator(
+          color: Colors.black,
+        ),
+      );
+    }
 
     return WillPopScope(
       onWillPop: () async {
         if (current == 0) {
           return true;
         } else {
-          prevPage();
+          popPage();
           return false;
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           brightness: Brightness.dark,
           elevation: 0.0,
           backgroundColor: Colors.transparent,
-          leading: current > 0
+          leading: _widget.isNotEmpty
               ? GestureDetector(
                   onTap: () {
-                    this.prevPage();
+                    this.popPage();
                   },
                   child: Icon(FlutterIcons.keyboard_backspace_mdi),
                 )
@@ -91,10 +129,11 @@ class _RequestServiceFlowState extends State<RequestServiceFlow> {
             color: Constants.primaryColor,
           ),
         ),
-        backgroundColor: current == 0 ? Constants.primaryColor : Colors.white,
+        backgroundColor:
+            _widget.isEmpty ? Constants.primaryColor : Colors.white,
         body: AnimatedSwitcher(
           duration: Duration(milliseconds: 300),
-          child: pages[current],
+          child: _widget.isNotEmpty ? _widgets[_widget.last] : _widgets["/one"],
         ),
       ),
     );

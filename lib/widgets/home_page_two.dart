@@ -81,6 +81,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
 
   @override
   Widget build(BuildContext context) {
+    print(this.widget.itemData);
     Size size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
@@ -120,7 +121,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
                   4,
                   (index) => Expanded(
                     child: Container(
-                      margin: EdgeInsets.only(bottom: index == 2 ? 0 : 10.0),
+                      margin: EdgeInsets.only(bottom: index == 3 ? 0 : 10.0),
                       child: Row(
                         children: [
                           serviceCard(options[index][0], active, setActiveFunc,
@@ -152,8 +153,9 @@ Widget serviceCard(Map item, String active, Function setActive,
       onTap: () {
         setActive(item["key"]);
         itemData["problem"] = item["name"];
+        itemData["problemIcon"] = item["icon"];
         Future.delayed(Duration(milliseconds: 350), () {
-          nextPage(itemData);
+          nextPage("/info", itemData);
         });
       },
       child: AnimatedContainer(

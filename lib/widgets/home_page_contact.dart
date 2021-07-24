@@ -18,7 +18,7 @@ class HomePageContact extends StatefulWidget {
 
 class _HomePageContactState extends State<HomePageContact> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  Map<String, String> customer = {};
+  Map<String, dynamic> customer = {};
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -56,7 +56,17 @@ class _HomePageContactState extends State<HomePageContact> {
               suffixIcon: FlutterIcons.person_mdi,
               onSaved: (value) {
                 customer["name"] = value;
+                customer["nameIcon"] = FlutterIcons.person_mdi;
               },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Udfyld venligst dit navn";
+                }
+                return null;
+              },
+              initialValue: this.widget.itemData["customer"] != null
+                  ? this.widget.itemData["customer"]["name"]
+                  : null,
             ),
             SizedBox(
               height: 10.0,
@@ -66,7 +76,17 @@ class _HomePageContactState extends State<HomePageContact> {
               suffixIcon: FlutterIcons.email_mdi,
               onSaved: (value) {
                 customer["email"] = value;
+                customer["emailIcon"] = FlutterIcons.email_mdi;
               },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Udfyld venligst din email";
+                }
+                return null;
+              },
+              initialValue: this.widget.itemData["customer"] != null
+                  ? this.widget.itemData["customer"]["email"]
+                  : null,
             ),
             SizedBox(
               height: 10.0,
@@ -76,7 +96,17 @@ class _HomePageContactState extends State<HomePageContact> {
               suffixIcon: FlutterIcons.phone_mdi,
               onSaved: (value) {
                 customer["phone_number"] = value;
+                customer["phone_numberIcon"] = FlutterIcons.phone_mdi;
               },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Udfyld venligst dit telefon nummer";
+                }
+                return null;
+              },
+              initialValue: this.widget.itemData["customer"] != null
+                  ? this.widget.itemData["customer"]["phone_number"]
+                  : null,
             ),
             SizedBox(
               height: 20.0,
@@ -84,11 +114,13 @@ class _HomePageContactState extends State<HomePageContact> {
             PrimaryButton(
               text: "Videre",
               onPressed: () {
-                _formKey.currentState.save();
-                this.widget.itemData["customer"] = customer;
-                Future.delayed(Duration(milliseconds: 350), () {
-                  this.widget.nextPage(this.widget.itemData);
-                });
+                if (_formKey.currentState.validate()) {
+                  _formKey.currentState.save();
+                  this.widget.itemData["customer"] = customer;
+                  Future.delayed(Duration(milliseconds: 350), () {
+                    this.widget.nextPage("/three", this.widget.itemData);
+                  });
+                }
               },
             )
           ],

@@ -18,7 +18,7 @@ class HomePageInformation extends StatefulWidget {
 
 class _HomePageInformationState extends State<HomePageInformation> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  Map<String, String> informations = {};
+  Map<String, dynamic> informations = {};
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -56,7 +56,11 @@ class _HomePageInformationState extends State<HomePageInformation> {
               suffixIcon: FlutterIcons.description_mdi,
               onSaved: (value) {
                 informations["issue"] = value;
+                informations["issueIcon"] = FlutterIcons.description_mdi;
               },
+              initialValue: this.widget.itemData["informations"] != null
+                  ? this.widget.itemData["informations"]["issue"]
+                  : null,
             ),
             SizedBox(
               height: 10.0,
@@ -66,7 +70,11 @@ class _HomePageInformationState extends State<HomePageInformation> {
               suffixIcon: FlutterIcons.important_devices_mdi,
               onSaved: (value) {
                 informations["brand"] = value;
+                informations["brandIcon"] = FlutterIcons.important_devices_mdi;
               },
+              initialValue: this.widget.itemData["informations"] != null
+                  ? this.widget.itemData["informations"]["brand"]
+                  : null,
             ),
             SizedBox(
               height: 10.0,
@@ -76,7 +84,12 @@ class _HomePageInformationState extends State<HomePageInformation> {
               suffixIcon: FlutterIcons.perm_device_information_mdi,
               onSaved: (value) {
                 informations["model"] = value;
+                informations["modelIcon"] =
+                    FlutterIcons.perm_device_information_mdi;
               },
+              initialValue: this.widget.itemData["informations"] != null
+                  ? this.widget.itemData["informations"]["model"]
+                  : null,
             ),
             SizedBox(
               height: 10.0,
@@ -86,7 +99,11 @@ class _HomePageInformationState extends State<HomePageInformation> {
               suffixIcon: FlutterIcons.timetable_mco,
               onSaved: (value) {
                 informations["device_age"] = value;
+                informations["device_ageIcon"] = FlutterIcons.timetable_mco;
               },
+              initialValue: this.widget.itemData["informations"] != null
+                  ? this.widget.itemData["informations"]["device_age"]
+                  : null,
             ),
             SizedBox(
               height: 20,
@@ -97,7 +114,7 @@ class _HomePageInformationState extends State<HomePageInformation> {
                 _formKey.currentState.save();
                 this.widget.itemData["informations"] = informations;
                 Future.delayed(Duration(milliseconds: 350), () {
-                  this.widget.nextPage(this.widget.itemData);
+                  this.widget.nextPage("/contact", this.widget.itemData);
                 });
               },
             )

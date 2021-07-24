@@ -10,7 +10,7 @@ class PageIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: List.generate(
-        6,
+        7,
         (index) => Container(
           width: ScreenUtil().setWidth(9.0),
           height: ScreenUtil().setHeight(9.0),

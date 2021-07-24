@@ -6,9 +6,17 @@ class InputWidget extends StatelessWidget {
   final IconData suffixIcon;
   final bool obscureText;
   final Function onSaved;
+  final Function validator;
+  final String initialValue;
 
-  InputWidget(
-      {this.suffixIcon, this.hintText, this.obscureText = false, this.onSaved});
+  InputWidget({
+    this.suffixIcon,
+    this.hintText,
+    this.obscureText = false,
+    this.onSaved,
+    this.validator,
+    this.initialValue,
+  });
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,6 +31,8 @@ class InputWidget extends StatelessWidget {
         left: 24.0,
       ),
       child: TextFormField(
+        initialValue: this.initialValue,
+        validator: this.validator,
         obscureText: this.obscureText,
         decoration: InputDecoration(
           suffixIcon: this.suffixIcon == null
@@ -38,6 +48,8 @@ class InputWidget extends StatelessWidget {
               color: Colors.transparent,
             ),
           ),
+          errorBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
           hintText: this.hintText,
           hintStyle: TextStyle(
             fontSize: 14.0,

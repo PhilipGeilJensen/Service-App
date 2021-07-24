@@ -3,7 +3,6 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:repair_service_ui/utils/constants.dart';
 import 'package:repair_service_ui/widgets/confirm_dropoff.dart';
-import 'package:repair_service_ui/widgets/confirm_mail.dart';
 import 'package:repair_service_ui/widgets/confirm_telephone.dart';
 import 'package:repair_service_ui/widgets/page_indicator.dart';
 
@@ -24,24 +23,24 @@ class _HomePageThreeState extends State<HomePageThree> {
   final List options = [
     {
       "name": "Snak med vores support",
-      "icon": "assets/svg/phone.svg",
+      "icon": Icons.phone,
       "key": "phone",
       "description": "Lad os ringe dig op hurtigst muligt",
-      "widget": 0,
+      "next": "/confirm",
     },
     {
       "name": "Modtag en mail",
-      "icon": "assets/svg/mail.svg",
+      "icon": Icons.mail,
       "key": "mail",
       "description": "Få svar på din henvendelse via mail",
-      "widget": 1,
+      "next": "/confirm",
     },
     {
       "name": "Aflever for reperation",
-      "icon": "assets/svg/repair.svg",
-      "key": "repair",
+      "icon": Icons.build,
+      "key": "dropoff",
       "description": "Vælg et tidspunkt for aflevering",
-      "widget": 2,
+      "next": "/booking",
     },
   ];
 
@@ -111,8 +110,10 @@ Widget serviceCard(Map item, String active, Function setActive, nextPage,
       onTap: () {
         setActive(item["key"]);
         itemData["service_method"] = item["key"];
+        itemData["service_method_name"] = item["name"];
+        itemData["service_methodIcon"] = item["icon"];
         Future.delayed(Duration(milliseconds: 350), () {
-          nextPage(item["widget"], itemData);
+          nextPage(item["next"], itemData);
         });
       },
       child: AnimatedContainer(
@@ -129,9 +130,10 @@ Widget serviceCard(Map item, String active, Function setActive, nextPage,
           children: [
             Align(
               alignment: Alignment.centerLeft,
-              child: SvgPicture.asset(
+              child: Icon(
                 item["icon"],
                 color: isActive ? Colors.white : null,
+                size: 42,
               ),
             ),
             Column(

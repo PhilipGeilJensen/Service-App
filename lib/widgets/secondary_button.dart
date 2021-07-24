@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:repair_service_ui/utils/constants.dart';
 
 class SecondaryButton extends StatelessWidget {
-  final String text;
+  final Text text;
   final Function onPressed;
   SecondaryButton({this.text, this.onPressed});
   @override
@@ -27,13 +27,7 @@ class SecondaryButton extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: Text(
-            this.text,
-            style: GoogleFonts.roboto(
-              color: Colors.white,
-              fontSize: 16.0,
-            ),
-          ),
+          child: this.text,
         ),
       ),
     );
