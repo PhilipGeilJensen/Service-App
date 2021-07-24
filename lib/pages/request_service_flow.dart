@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:repair_service_ui/utils/constants.dart';
 import 'package:repair_service_ui/widgets/confirm_dropoff.dart';
 import 'package:repair_service_ui/widgets/confirm_page.dart';
@@ -104,36 +105,45 @@ class _RequestServiceFlowState extends State<RequestServiceFlow> {
 
     return WillPopScope(
       onWillPop: () async {
-        if (current == 0) {
+        if (_widget.isEmpty) {
           return true;
         } else {
           popPage();
           return false;
         }
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          brightness: Brightness.dark,
-          elevation: 0.0,
-          backgroundColor: Colors.transparent,
-          leading: _widget.isNotEmpty
-              ? GestureDetector(
-                  onTap: () {
-                    this.popPage();
-                  },
-                  child: Icon(FlutterIcons.keyboard_backspace_mdi),
-                )
-              : null,
-          iconTheme: IconThemeData(
-            color: Constants.primaryColor,
+      child: LoaderOverlay(
+        useDefaultLoading: false,
+        overlayWidget: Center(
+          child: CircularProgressIndicator(
+            color: Colors.black,
           ),
         ),
-        backgroundColor:
-            _widget.isEmpty ? Constants.primaryColor : Colors.white,
-        body: AnimatedSwitcher(
-          duration: Duration(milliseconds: 300),
-          child: _widget.isNotEmpty ? _widgets[_widget.last] : _widgets["/one"],
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            brightness: Brightness.dark,
+            elevation: 0.0,
+            backgroundColor: Colors.transparent,
+            leading: _widget.isNotEmpty
+                ? GestureDetector(
+                    onTap: () {
+                      this.popPage();
+                    },
+                    child: Icon(FlutterIcons.keyboard_backspace_mdi),
+                  )
+                : null,
+            iconTheme: IconThemeData(
+              color: Constants.primaryColor,
+            ),
+          ),
+          backgroundColor:
+              _widget.isEmpty ? Constants.primaryColor : Colors.white,
+          body: AnimatedSwitcher(
+            duration: Duration(milliseconds: 300),
+            child:
+                _widget.isNotEmpty ? _widgets[_widget.last] : _widgets["/one"],
+          ),
         ),
       ),
     );

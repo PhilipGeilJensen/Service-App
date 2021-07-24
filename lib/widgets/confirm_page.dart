@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:repair_service_ui/utils/constants.dart';
 import 'package:repair_service_ui/widgets/confirm_dropoff.dart';
 import 'package:repair_service_ui/widgets/confirm_telephone.dart';
@@ -139,88 +140,94 @@ class _ConfirmPageState extends State<ConfirmPage> {
           ),
           PrimaryButton(
             text: "Send sag afsted",
-            onPressed: () => {
-              http
-                  .post(
-                Uri.parse(
-                    'https://mlcittcx45.execute-api.eu-central-1.amazonaws.com/email'),
-                headers: <String, String>{
-                  'Content-Type': 'application/json; charset=UTF-8',
-                },
-                body: jsonEncode({
-                  "device": this.widget.itemData["device"],
-                  "problem": this.widget.itemData["problem"],
-                  "information": {
-                    "issue": this.widget.itemData["informations"]["issue"],
-                    "brand": this.widget.itemData["informations"]["brand"],
-                    "model": this.widget.itemData["informations"]["model"],
-                    "device_age": this.widget.itemData["informations"]
-                        ["device_age"],
-                  },
-                  "customer": {
-                    "name": this.widget.itemData["customer"]["name"],
-                    "email": this.widget.itemData["customer"]["email"],
-                    "phone_number": this.widget.itemData["customer"]
-                        ["phone_number"],
-                  },
-                  "service_method": this.widget.itemData["service_method"],
-                  "drop_off_date": {
-                    "date": DateTime.parse(
-                            this.widget.itemData["drop_off_date"].toString())
-                        .toIso8601String(),
-                  },
-                }),
-              )
-                  .then((value) {
-                if (value.statusCode == 200) {
-                  Scaffold.of(context).showBottomSheet(
-                    (context) => BottomSheet(
-                      onClosing: () => Navigator.pop(context),
-                      builder: (context) {
-                        return Container(
-                          height: 60,
-                          color: Colors.green[800],
-                          alignment: Alignment.center,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: SizedBox(),
-                                flex: 1,
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: Text(
-                                    "Vi har modtaget din henvendelse",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                flex: 2,
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: IconButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    icon: Icon(
-                                      Icons.close,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                flex: 1,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                  this.widget.reset();
-                }
-              })
+            onPressed: () {
+              context.loaderOverlay.show();
+              // http
+              //     .post(
+              //   Uri.parse(
+              //       'https://mlcittcx45.execute-api.eu-central-1.amazonaws.com/email'),
+              //   headers: <String, String>{
+              //     'Content-Type': 'application/json; charset=UTF-8',
+              //   },
+              //   body: jsonEncode({
+              //     "device": this.widget.itemData["device"],
+              //     "problem": this.widget.itemData["problem"],
+              //     "information": {
+              //       "issue": this.widget.itemData["informations"]["issue"],
+              //       "brand": this.widget.itemData["informations"]["brand"],
+              //       "model": this.widget.itemData["informations"]["model"],
+              //       "device_age": this.widget.itemData["informations"]
+              //           ["device_age"],
+              //     },
+              //     "customer": {
+              //       "name": this.widget.itemData["customer"]["name"],
+              //       "email": this.widget.itemData["customer"]["email"],
+              //       "phone_number": this.widget.itemData["customer"]
+              //           ["phone_number"],
+              //     },
+              //     "service_method": this.widget.itemData["service_method"],
+              //     "drop_off_date": {
+              //       "date": this.widget.itemData["drop_off_date"] != null
+              //           ? DateTime.parse(this
+              //                   .widget
+              //                   .itemData["drop_off_date"]
+              //                   .toString())
+              //               .toIso8601String()
+              //           : null,
+              //     },
+              //   }),
+              // )
+              //     .then((value) {
+              //   if (value.statusCode == 200) {
+              //     Scaffold.of(context).showBottomSheet(
+              //       (context) => BottomSheet(
+              //         onClosing: () => Navigator.pop(context),
+              //         builder: (context) {
+              //           return Container(
+              //             height: 60,
+              //             color: Colors.green[800],
+              //             alignment: Alignment.center,
+              //             child: Row(
+              //               children: [
+              //                 Expanded(
+              //                   child: SizedBox(),
+              //                   flex: 1,
+              //                 ),
+              //                 Expanded(
+              //                   child: Center(
+              //                     child: Text(
+              //                       "Vi har modtaget din henvendelse",
+              //                       style: TextStyle(
+              //                         color: Colors.white,
+              //                         fontSize: 16,
+              //                         fontWeight: FontWeight.w600,
+              //                       ),
+              //                     ),
+              //                   ),
+              //                   flex: 2,
+              //                 ),
+              //                 Expanded(
+              //                   child: Center(
+              //                     child: IconButton(
+              //                       onPressed: () => Navigator.pop(context),
+              //                       icon: Icon(
+              //                         Icons.close,
+              //                         color: Colors.white,
+              //                       ),
+              //                     ),
+              //                   ),
+              //                   flex: 1,
+              //                 ),
+              //               ],
+              //             ),
+              //           );
+              //         },
+              //       ),
+              //     );
+              //     context.loaderOverlay.hide();
+              //     this.widget.reset();
+              //   }
+              // });
             },
           ),
           SizedBox(
