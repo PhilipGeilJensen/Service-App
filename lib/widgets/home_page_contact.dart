@@ -40,7 +40,7 @@ class _HomePageContactState extends State<HomePageContact> {
               height: 20.0,
             ),
             Text(
-              "Indtast kontakt oplysninger? ",
+              "Indtast kontakt oplysninger",
               style: TextStyle(
                 color: Constants.primaryColor,
                 fontSize: 28.0,

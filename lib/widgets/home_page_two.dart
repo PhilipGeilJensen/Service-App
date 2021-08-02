@@ -101,7 +101,11 @@ class _HomePageTwoState extends State<HomePageTwo> {
             height: 20.0,
           ),
           Text(
-            "Hvad sker der med din " + this.widget.itemData["device"] + "? ",
+            this.widget.itemData["device"] != "Andet"
+                ? "Hvad sker der med din " +
+                    this.widget.itemData["device"] +
+                    "? "
+                : "Hvad sker der med din Enhed?",
             style: TextStyle(
               color: Constants.primaryColor,
               fontSize: 28.0,
